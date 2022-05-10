@@ -8,7 +8,6 @@ running = True
 root = False
 root_login = True
 
-# Test
 
 def load_key():
     with open('key.key', 'rb') as file:
