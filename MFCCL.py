@@ -8,8 +8,6 @@ running = True
 root = False
 root_login = True
 
-# Test
-
 
 def load_key():
     with open('key.key', 'rb') as file:
@@ -213,6 +211,10 @@ root > Allows the user to retry root login.
             root = True
         else:
             print('Password Incorrect')
+
+    elif command == 'exit':
+        print('Goodbye!')
+        running = False
 
     else:
         print('Not Understood, Please Try Again.')
