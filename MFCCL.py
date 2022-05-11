@@ -16,7 +16,45 @@ def load_key():
     return key
 
 
-key = load_key()
+def reset_passwords():
+    with open('SavedPasswords.txt', 'w') as f:
+        f.write('')
+    print('SavedPasswords.txt wiped.')
+
+
+def reset_maindata():
+    with open('MainData.txt', 'w') as f:
+        f.write('')
+    print('MainData.txt wiped.')
+
+
+
+
+try:
+    key = load_key()
+except:
+    print('No key.key file found.')
+    y_or_n = input('Generate a new key.key file?(y/n) >>> ').lower()
+    if y_or_n == 'y' or y_or_n == 'yes':
+        new_key = Fernet.generate_key()
+        with open('key.key', 'wb') as f:
+            f.write(new_key)
+        key = load_key()
+        print('New key.key file setup and loaded')
+
+        y_or_n = input('Because new key generated, master password and all other encrypted settings and data should '
+                       'be wiped unless you think you can recover your lost key.key file. Reset All Data? >>> ')
+        if y_or_n == 'y' or y_or_n == 'yes':
+            reset_maindata()
+            reset_passwords()
+        else:
+            print('No data wiped. Try to recover old key.key file or reset data.')
+    else:
+        print('No new file generated.')
+        y_or_n = input('Close Program to prevent errors? >>> ')
+        if y_or_n == 'y' or y_or_n == 'yes':
+            running = False
+
 fer = Fernet(key)
 
 
@@ -74,6 +112,9 @@ while running:
 genpass > Generates a random secure password from 8-16 characters long.
 *newroot > Allows the user to change the root password.
 root > Allows the user to retry root login.
+webbrowser > Opens the default web browser to google.
+*resetmaindata > WILL RESET ALL DATA STORED IN THIS FILE INCLUDING ROOT PASS AND OTHER SETTINGS. 
+*resetsavedpasswords > WILL RESET ALL DATA STORED IN THIS FILE.
         ''')
     elif command == 'q' or command == 'quit':
         print('Goodbye!')
@@ -220,6 +261,18 @@ root > Allows the user to retry root login.
     elif command == 'webbrowser':
         print('Your default web browser had been opened')
         webbrowser.open('https://google.com')
+
+    elif command == 'resetmaindata':
+        if root:
+            are_you_sure = input('Retype the command with proper capitilization.(ResetMainData) >>> ')
+            if are_you_sure == 'ResetMainData':
+                reset_maindata()
+
+    elif command == 'resetsavedpasswords':
+        if root:
+            are_you_sure = input('Retype the command with proper capitilization.(ResetSavedPasswords) >>> ')
+            if are_you_sure == 'ResetSavedPasswords':
+                reset_passwords()
 
     else:
         print('Not Understood, Please Try Again.')
