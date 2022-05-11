@@ -3,6 +3,7 @@ import pyperclip
 import cryptography
 from cryptography.fernet import Fernet
 import string
+import webbrowser
 
 running = True
 root = False
@@ -215,6 +216,10 @@ root > Allows the user to retry root login.
     elif command == 'exit':
         print('Goodbye!')
         running = False
+
+    elif command == 'webbrowser':
+        print('Your default web browser had been opened')
+        webbrowser.open('https://google.com')
 
     else:
         print('Not Understood, Please Try Again.')
