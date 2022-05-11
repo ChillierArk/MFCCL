@@ -42,8 +42,10 @@ except:
         key = load_key()
         print('New key.key file setup and loaded')
 
-        y_or_n = input('Because new key generated, master password and all other encrypted settings and data should '
-                       'be wiped unless you think you can recover your lost key.key file. Reset All Data? >>> ')
+        y_or_n = input('''
+Because new key generated, master password and all other encrypted settings and data 
+should be wiped unless you think you can recover your lost key.key file. 
+Reset All Data?(y/n) >>> ''')
         if y_or_n == 'y' or y_or_n == 'yes':
             reset_maindata()
             reset_passwords()
