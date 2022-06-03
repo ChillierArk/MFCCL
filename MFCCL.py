@@ -4,8 +4,9 @@ import cryptography
 from cryptography.fernet import Fernet
 import string
 import webbrowser
-import math
+import os
 import statistics
+import matplotlib.pyplot as plt
 
 running = True
 root = False
@@ -105,7 +106,8 @@ while running:
         if root:
             print('Root Mode Enabled')
         print('''
-* = Root Only Command.
+* = Root Only Command. 
+$ = Linux Only Command. (Normally needs to be manually configured for your linux flavour) (Default is xfce4-terminal)
 (h)elp > Shows a list of useful commands.
 (q)uit > Stops the program.
 *showpass > Shows all current passwords that are saved.     
@@ -119,6 +121,8 @@ webbrowser > Opens the default web browser to google.
 *resetsavedpasswords > WILL RESET ALL DATA STORED IN THIS FILE.
 dataset > Calculates useful information about a data set.
 *createfile > Creates a file at a specified path with a specified name and extension.
+$terminal > Opens a Linux terminal and runs the command that you specify.
+thank_you! > Thank your program!
         ''')
     elif command == 'q' or command == 'quit':
         print('Goodbye!')
@@ -332,6 +336,38 @@ dataset > Calculates useful information about a data set.
         else:
             print('No Root Access')
 
+    elif command == 'terminal':
+        command = input('Please Type Your Linux Command. >>> ')
+        os.system(f"gnome-terminal -H -x {command}")
+    elif command == 'thank_you!' or command == 'thank_you' or command == 'thank you' or command == 'thank you!' or command == 'thanks' or command == 'thanks!':
+        print('Your Welcome!')
+
+    elif command == 'graph':
+        how_many_cords = ''
+        while isinstance(how_many_cords, str):
+            try:
+                how_many_cords = int(input('How many points do you have? >>> '))
+            except ValueError:
+                print('You need to input a whole number.')
+
+        x = []
+        y = []
+        print('Enter your x values in order.')
+        for i in range(0, how_many_cords):
+            x_value = input(f'x value #{i} >>> ')
+            x.append(x_value)
+        print('Enter your y values in order.')
+        for i in range(0, how_many_cords):
+            y_value = input(f'y value #{i} >>> ')
+            y.append(y_value)
+        plt.plot(x, y, color='red', linestyle='solid', linewidth=2,
+                 marker='o', markersize=6,
+                 markerfacecolor='blue', markeredgecolor='blue')
+        plt.grid()
+        plt.show()
+
+    elif command == '':
+        print("You're meant to input a command. Type help for a list of commands.")
 
     else:
         print('Not Understood, Please Try Again.')
