@@ -4,9 +4,8 @@ import cryptography
 from cryptography.fernet import Fernet
 import string
 import webbrowser
-import os
+import math
 import statistics
-import matplotlib.pyplot as plt
 
 running = True
 root = False
@@ -14,38 +13,38 @@ root_login = True
 
 
 def load_key():
-    with open('key.key', 'rb') as file:
+    with open('Resources/key.key', 'rb') as file:
         key = file.read()
     return key
 
 
 def reset_passwords():
-    with open('SavedPasswords.txt', 'w') as f:
+    with open('Resources/SavedPasswords.txt', 'w') as f:
         f.write('')
     print('SavedPasswords.txt wiped.')
 
 
 def reset_maindata():
-    with open('MainData.txt', 'w') as f:
+    with open('Resources/MainData.txt', 'w') as f:
         f.write('')
     print('MainData.txt wiped.')
 
 
 try:
     key = load_key()
-except:
+except FileNotFoundError:
     print('No key.key file found.')
     y_or_n = input('Generate a new key.key file?(y/n) >>> ').lower()
     if y_or_n == 'y' or y_or_n == 'yes':
         new_key = Fernet.generate_key()
-        with open('key.key', 'wb') as f:
+        with open('Resources/key.key', 'wb') as f:
             f.write(new_key)
         key = load_key()
         print('New key.key file setup and loaded')
 
         y_or_n = input('''
-Because new key generated, master password and all other encrypted settings and data 
-should be wiped unless you think you can recover your lost key.key file. 
+Because new key generated, master password and all other encrypted settings and data
+should be wiped unless you think you can recover your lost key.key file.
 Reset All Data?(y/n) >>> ''')
         if y_or_n == 'y' or y_or_n == 'yes':
             reset_maindata()
@@ -70,7 +69,7 @@ def decrypt(to_be_decrypted):
 
 
 # Stores the contents of the MainData File
-with open('MainData.txt', 'r') as f:
+with open('Resources/MainData.txt', 'r') as f:
     main_data_encrypt = f.readlines()
 main_data = []
 for index in main_data_encrypt:
@@ -81,9 +80,9 @@ for index in main_data_encrypt:
 try:
     root_pass = main_data[0].rstrip()
 except:
-    with open('MainData.txt', 'w') as f:
+    with open('Resources/MainData.txt', 'w') as f:
         f.write(encrypt('123'))
-    with open('MainData.txt', 'r') as f:
+    with open('Resources/MainData.txt', 'r') as f:
         root_pass_encrypt = f.readlines(1)
     print('No root password found. Reset to 123')
     root_pass = decrypt(root_pass_encrypt[0].rstrip())
@@ -106,8 +105,7 @@ while running:
         if root:
             print('Root Mode Enabled')
         print('''
-* = Root Only Command. 
-$ = Linux Only Command. (Normally needs to be manually configured for your linux flavour) (Default is xfce4-terminal)
+* = Root Only Command.
 (h)elp > Shows a list of useful commands.
 (q)uit > Stops the program.
 *showpass > Shows all current passwords that are saved.     
@@ -121,8 +119,6 @@ webbrowser > Opens the default web browser to google.
 *resetsavedpasswords > WILL RESET ALL DATA STORED IN THIS FILE.
 dataset > Calculates useful information about a data set.
 *createfile > Creates a file at a specified path with a specified name and extension.
-$terminal > Opens a Linux terminal and runs the command that you specify.
-thank_you! > Thank your program!
         ''')
     elif command == 'q' or command == 'quit':
         print('Goodbye!')
@@ -130,7 +126,7 @@ thank_you! > Thank your program!
 
     elif command == 'showpass':
         if root:
-            with open('SavedPasswords.txt', 'r') as f:
+            with open('Resources/SavedPasswords.txt', 'r') as f:
                 all_pass_encrypt = f.readlines()
             all_pass = []
 
@@ -153,17 +149,17 @@ thank_you! > Thank your program!
             new_pass = input('What is the password for this account? >>> ')
             y_or_n = input(f'Is this correct?(y/n)\n{new_label}\n{new_user_email}\n{new_pass}\n>>> ')
             if y_or_n == 'y' or y_or_n == 'yes':
-                with open('SavedPasswords.txt', 'r') as f:
+                with open('Resources/SavedPasswords.txt', 'r') as f:
                     saved_passes = f.readlines()
                 if len(saved_passes) == 0:
-                    with open('SavedPasswords.txt', 'a') as f:
+                    with open('Resources/SavedPasswords.txt', 'a') as f:
                         f.write(encrypt(new_label))
                         f.write('\n' + encrypt(new_user_email))
                         f.write('\n' + encrypt(new_pass))
                         f.write('\n' + encrypt('|'))
                         print('Account added.')
                 else:
-                    with open('SavedPasswords.txt', 'a') as f:
+                    with open('Resources/SavedPasswords.txt', 'a') as f:
                         f.write('\n' + encrypt(new_label))
                         f.write('\n' + encrypt(new_user_email))
                         f.write('\n' + encrypt(new_pass))
@@ -176,7 +172,7 @@ thank_you! > Thank your program!
 
     elif command == 'removepass':
         if root:
-            with open('SavedPasswords.txt', 'r') as f:
+            with open('Resources/SavedPasswords.txt', 'r') as f:
                 all_pass_encrypt = f.readlines()
             all_pass = []
             for index in all_pass_encrypt:
@@ -191,7 +187,7 @@ thank_you! > Thank your program!
                     all_pass.pop(i)
                 else:
                     i += 1
-            with open('SavedPasswords.txt', 'w') as f:
+            with open('Resources/SavedPasswords.txt', 'w') as f:
                 i = 0
                 for index in all_pass:
                     i += 1
@@ -221,17 +217,17 @@ thank_you! > Thank your program!
                 new_user_email = input('What is the username/email/phone-number for this account? >>> ')
                 y_or_n = input(f'Is this correct?(y/n)\n{new_label}\n{new_user_email}\n{final_pass}\n>>> ')
                 if y_or_n == 'y' or y_or_n == 'yes':
-                    with open('SavedPasswords.txt', 'r') as f:
+                    with open('Resources/SavedPasswords.txt', 'r') as f:
                         saved_passes = f.readlines()
                     if len(saved_passes) == 0:
-                        with open('SavedPasswords.txt', 'a') as f:
+                        with open('Resources/SavedPasswords.txt', 'a') as f:
                             f.write(encrypt(new_label))
                             f.write('\n' + encrypt(new_user_email))
                             f.write('\n' + encrypt(final_pass))
                             f.write('\n' + encrypt('|'))
                             print('Account added.')
                     else:
-                        with open('SavedPasswords.txt', 'a') as f:
+                        with open('Resources/SavedPasswords.txt', 'a') as f:
                             f.write('\n' + encrypt(new_label))
                             f.write('\n' + encrypt(new_user_email))
                             f.write('\n' + encrypt(final_pass))
@@ -247,7 +243,8 @@ thank_you! > Thank your program!
             new_root_pass = input('Enter the new root password that you want. >>> ')
             main_data_encrypt[0] = encrypt(new_root_pass)
             main_data[0] = new_root_pass
-            with open('MainData.txt', 'w') as f:
+            root_pass = new_root_pass
+            with open('Resources/MainData.txt', 'w') as f:
                 for index in main_data_encrypt:
                     f.write(index)
                 print(f'Your new root password is {new_root_pass}.')
@@ -256,7 +253,7 @@ thank_you! > Thank your program!
 
     elif command == 'root':
         user_attempt = input('What is the root password? >>> ')
-        if user_attempt == main_data[0]:
+        if user_attempt == root_pass:
             print('Root Enabled.')
             root = True
         else:
@@ -336,38 +333,11 @@ thank_you! > Thank your program!
         else:
             print('No Root Access')
 
-    elif command == 'terminal':
-        command = input('Please Type Your Linux Command. >>> ')
-        os.system(f"gnome-terminal -H -x {command}")
-    elif command == 'thank_you!' or command == 'thank_you' or command == 'thank you' or command == 'thank you!' or command == 'thanks' or command == 'thanks!':
-        print('Your Welcome!')
-
-    elif command == 'graph':
-        how_many_cords = ''
-        while isinstance(how_many_cords, str):
-            try:
-                how_many_cords = int(input('How many points do you have? >>> '))
-            except ValueError:
-                print('You need to input a whole number.')
-
-        x = []
-        y = []
-        print('Enter your x values in order.')
-        for i in range(0, how_many_cords):
-            x_value = input(f'x value #{i} >>> ')
-            x.append(x_value)
-        print('Enter your y values in order.')
-        for i in range(0, how_many_cords):
-            y_value = input(f'y value #{i} >>> ')
-            y.append(y_value)
-        plt.plot(x, y, color='red', linestyle='solid', linewidth=2,
-                 marker='o', markersize=6,
-                 markerfacecolor='blue', markeredgecolor='blue')
-        plt.grid()
-        plt.show()
-
-    elif command == '':
-        print("You're meant to input a command. Type help for a list of commands.")
+    elif command == 'rps':
+        computer_choice = random.choice(range(0,3))
+        human_choice = input('r, p, or s? >>> ')
+        if computer_choice == 0 and human_choice == 'r':
+            print('It was a tie!')
 
     else:
         print('Not Understood, Please Try Again.')
